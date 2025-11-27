@@ -1,6 +1,6 @@
 name: deploy
 env:
-  IMAGE_NAME: app251127-2
+  IMAGE_NAME: app251127-3
 
 on:
   push:
