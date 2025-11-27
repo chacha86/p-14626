@@ -51,7 +51,7 @@ export default function ClientLayout({
           {!isLogin && <Link href="/members/login">로그인</Link>}
           {!isLogin && (
             <Link
-              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao?redirectUrl=${process.env.NEXT_PUBLIC_BASE_URL}`}
+              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao?redirectUrl=${process.env.NEXT_PUBLIC_FRONT_BASE_URL}`}
             >
               카카오 로그인
             </Link>
