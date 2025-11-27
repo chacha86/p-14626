@@ -6,6 +6,7 @@ spring:
     import: optional:file:.env.properties
   profiles:
     active: dev
+    include: secret
   thymeleaf:
     cache: false
     prefix: file:src/main/resources/templates/
@@ -31,7 +32,7 @@ spring:
       client:
         registration:
           kakao:
-            clientId: ${KAKAO_CLIENT_ID}
+            clientId: ${custom.oauth2.kakao.clientId}
             scope: profile_nickname, profile_image
             client-name: Kakao
             authorization-grant-type: authorization_code
@@ -73,4 +74,4 @@ custom:
 
   jwt:
     expireSeconds: "#{30 * 60}"
-    secretPattern: ${CUSTOM_JWT_SECRET_PATTERN}
+    secretPattern: ${custom.jwt.secretPattern}
