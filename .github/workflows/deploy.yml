@@ -46,7 +46,7 @@ jobs:
     needs: makeTagAndRelease
     defaults:
       run:
-        working-directory: back # 원하는 디렉토리
+        working-directory: backend # 원하는 디렉토리
     runs-on: ubuntu-latest
     outputs:
       owner_lc: ${{ steps.export_owner.outputs.owner_lc }}
@@ -80,7 +80,7 @@ jobs:
       - name: 빌드 앤 푸시
         uses: docker/build-push-action@v3
         with:
-          context: ./back
+          context: ./backend
           push: true
           tags: |
             ghcr.io/${{ steps.export_owner.outputs.owner_lc }}/${{ steps.export_image.outputs.image_name }}:${{ needs.makeTagAndRelease.outputs.tag_name }},
