@@ -112,7 +112,7 @@ class PostRepositoryTest {
     @DisplayName("findQPagedByKw")
     fun t5() {
         val postPage = postRepository.findQPagedByKw(
-            PostSearchKeywordType.AUTHOR_NICKNAME,
+            PostSearchKeywordType.AUTHOR_NAME,
             "유저",
             PageRequest.of(
                 0,
@@ -127,8 +127,8 @@ class PostRepositoryTest {
         println(content[1].title)
         println(content[2].title)
 
-        println(content[0].author.nickname)
-        println(content[2].author.nickname)
+        println(content[0].author.name)
+        println(content[2].author.name)
 
         assertThat(content).isNotEmpty
     }

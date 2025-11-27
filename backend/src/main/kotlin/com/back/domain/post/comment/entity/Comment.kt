@@ -1,7 +1,7 @@
 package com.back.domain.post.comment.entity
 
-import com.back.domain.member.member.entity.Member
 import com.back.domain.post.post.entity.Post
+import com.back.domain.post.postUser.entity.PostUser
 import com.back.global.exception.ServiceException
 import com.back.global.jpa.entity.BaseEntity
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 class Comment(
     @field:ManyToOne(fetch = FetchType.LAZY)
-    var author: Member,
+    var author: PostUser,
 
     var content: String,
 
@@ -24,11 +24,11 @@ class Comment(
         this.content = content
     }
 
-    fun checkActorModify(actor: Member?) {
+    fun checkActorModify(actor: PostUser?) {
         if (author != actor) throw ServiceException("403-1", "댓글 수정 권한이 없습니다.")
     }
 
-    fun checkActorDelete(actor: Member?) {
+    fun checkActorDelete(actor: PostUser?) {
         if (author != actor) throw ServiceException("403-2", "댓글 삭제 권한이 없습니다.")
     }
 }

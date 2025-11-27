@@ -1,7 +1,7 @@
 package com.back.domain.post.post.entity
 
-import com.back.domain.member.member.entity.Member
 import com.back.domain.post.comment.entity.Comment
+import com.back.domain.post.postUser.entity.PostUser
 import com.back.global.exception.ServiceException
 import com.back.global.jpa.entity.BaseEntity
 import com.back.standard.extentions.getOrThrow
@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany
 @Entity
 class Post(
     @field:ManyToOne(fetch = FetchType.LAZY)
-    var author: Member,
+    var author: PostUser,
 
     var title: String,
 
@@ -34,9 +34,10 @@ class Post(
         this.content = content
     }
 
-    fun addComment(author: Member, content: String): Comment {
+    fun addComment(author: PostUser, content: String): Comment {
         val comment = Comment(author, content, this)
         comments.add(comment)
+        author.incrementPostCommentsCount()
 
         return comment
     }
@@ -44,6 +45,7 @@ class Post(
     fun deleteComment(commentId: Long) {
         val comment = findCommentById(commentId).getOrThrow()
         comments.remove(comment)
+        comment.author.decrementPostCommentsCount()
     }
 
     fun updateComment(commentId: Long, content: String): Comment {
@@ -56,11 +58,11 @@ class Post(
         return comments.firstOrNull { it.id == commentId }
     }
 
-    fun checkActorModify(actor: Member) {
+    fun checkActorModify(actor: PostUser) {
         if (author != actor) throw ServiceException("403-1", "수정 권한이 없습니다.")
     }
 
-    fun checkActorDelete(actor: Member) {
+    fun checkActorDelete(actor: PostUser) {
         if (author != actor) throw ServiceException("403-2", "삭제 권한이 없습니다.")
     }
 

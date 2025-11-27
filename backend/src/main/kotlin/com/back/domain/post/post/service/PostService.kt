@@ -1,20 +1,26 @@
 package com.back.domain.post.post.service
 
-import com.back.domain.member.member.entity.Member
+import com.back.domain.post.comment.dto.CommentDto
 import com.back.domain.post.comment.entity.Comment
+import com.back.domain.post.comment.event.PostCommentWrittenEvent
+import com.back.domain.post.post.dto.PostDto
 import com.back.domain.post.post.entity.Post
 import com.back.domain.post.post.repository.PostRepository
+import com.back.domain.post.postUser.dto.PostUserDto
+import com.back.domain.post.postUser.entity.PostUser
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class PostService (
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val publisher: ApplicationEventPublisher,
 ) {
 
-    fun write(author: Member, title: String, content: String): Post {
+    fun write(author: PostUser, title: String, content: String): Post {
         val post = Post(author, title, content)
-
+        author.incrementPostsCount()
         return postRepository.save(post)
     }
 
@@ -34,11 +40,24 @@ class PostService (
         post.update(title, content)
     }
 
-    fun writeComment(author: Member, post: Post, content: String): Comment {
-        return post.addComment(author, content)
+    fun writeComment(author: PostUser, post: Post, content: String): Comment {
+        val comment = post.addComment(author, content)
+
+        postRepository.flush()
+
+        publisher.publishEvent(
+            PostCommentWrittenEvent(
+                CommentDto(comment),
+                PostDto(post),
+                PostUserDto(author)
+            )
+        )
+
+        return comment
     }
 
     fun deleteComment(post: Post, commentId: Long) {
+        post.author.decrementPostsCount()
         post.deleteComment(commentId)
     }
 
