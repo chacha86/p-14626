@@ -114,6 +114,9 @@ jobs:
           working-directory: /
           comment: Deploy
           command: |
+            #!/bin/bash
+            set -e
+          
             # 공통 변수
             IMAGE="ghcr.io/${{ needs.buildImageAndPush.outputs.owner_lc }}/${{ needs.buildImageAndPush.outputs.image_name }}:latest"
             NETWORK="common"
