@@ -178,6 +178,43 @@ systemctl start docker
 # 도커 네트워크 생성
 docker network create common
 
+## 설정파일을 위한 디렉토리 생성
+mkdir -p ${PWD}/dockerProjects/ha_proxy_1/volumes/usr/local/etc/haproxy
+
+## 설정파일 생성
+echo -e "
+defaults
+    mode http
+    timeout connect 5s
+    timeout client 60s
+    timeout server 60s
+
+frontend http_front
+    bind *:80
+    acl host_app1 hdr_beg(host) -i api.p-14626.qwas.shop
+
+    use_backend http_back_1 if host_app1
+
+backend http_back_1
+    balance roundrobin
+    option httpchk GET /actuator/health
+    default-server inter 2s rise 1 fall 1
+    option redispatch
+
+    server app_server_1_1 app1_1:8080 check
+    server app_server_1_2 app1_2:8080 check
+" > ${PWD}/dockerProjects/ha_proxy_1/volumes/usr/local/etc/haproxy/haproxy.cfg
+
+## ha_proxy_1 컨테이너 실행
+docker run \
+  -d \
+  --network common \
+  -p 8090:80 \
+  -v /${PWD}/dockerProjects/ha_proxy_1/volumes/usr/local/etc/haproxy:/usr/local/etc/haproxy \
+  -e TZ=Asia/Seoul \
+  --name ha_proxy_1 \
+  haproxy
+
 # nginx 설치
 docker run -d \
   --name npm_1 \
