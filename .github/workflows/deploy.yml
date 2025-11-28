@@ -114,7 +114,7 @@ jobs:
           working-directory: /
           comment: Deploy
           command: |
-          
+            # 공통변수
             IMAGE="ghcr.io/${{ needs.buildImageAndPush.outputs.owner_lc }}/${{ needs.buildImageAndPush.outputs.image_name }}:latest"
             NETWORK="common"
             HEALTH_ENDPOINT="/actuator/health"
